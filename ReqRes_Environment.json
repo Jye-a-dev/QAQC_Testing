@@ -1,0 +1,28 @@
+{
+	"id": "253a7885-268d-429d-9f66-a1ac1d2e4779",
+	"name": "247480201010195_NguyenVietDuyKhoa_ReqRes_ENV",
+	"values": [
+		{
+			"key": "baseUrl",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "userId",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "userToken",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"color": 240,
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2026-10-22T07:11:17.961Z",
+	"_postman_exported_using": "Postman/12.33.0"
+}

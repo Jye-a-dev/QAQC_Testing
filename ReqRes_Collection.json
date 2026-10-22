@@ -1,0 +1,306 @@
+{
+  "info": {
+    "_postman_id": "d358cc8b-aff4-4d1c-afa6-57283f1c8871",
+    "name": "247480201010195_NguyenVietDuyKhoa_ReqRes",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51621405",
+    "_collection_link": "https://go.postman.co/collection/51621405-d358cc8b-aff4-4d1c-afa6-57283f1c8871?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Pos",
+      "item": [
+        {
+          "name": "Register User / Get Auth Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// 1. Kiểm tra Status code trả về là 200 OK\r\npm.test(\"Kiểm tra Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n// 2. Trích xuất token từ JSON response và lưu tự động vào biến môi trường userToken\r\npm.test(\"Trích xuất và lưu userToken vào Environment\", function () {\r\n    var jsonData = pm.response.json();\r\n    \r\n    // Kiểm tra cấu trúc response có chứa token hợp lệ\r\n    pm.expect(jsonData).to.have.property(\"token\");\r\n    pm.expect(jsonData.token).to.be.a(\"string\").and.not.empty;\r\n    \r\n    // Lưu vào biến môi trường theo đúng yêu cầu\r\n    pm.environment.set(\"userToken\", jsonData.token);\r\n});\r\n\r\n// 3. (Mở rộng) Kiểm tra thêm thuộc tính 'id' trong phản hồi\r\npm.test(\"Kiểm tra response có id người dùng\", function () {\r\n    var jsonData = pm.response.json();\r\n    pm.expect(jsonData).to.have.property(\"id\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"eve.holt@reqres.in\",\r\n  \"password\": \"pistol\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Single User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// 1. Kiểm tra Status code trả về là 201 Created\r\npm.test(\"Kiểm tra Status code is 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\n// 2. Parse dữ liệu Request và Response\r\nconst reqBody = JSON.parse(pm.request.body.raw);\r\nconst resBody = pm.response.json();\r\n\r\n// Kiểm tra trường 'name' và 'job' trong response khớp với request gửi lên\r\npm.test(\"Kiểm tra trường name và job trong response khớp đúng dữ liệu gửi\", function () {\r\n    pm.expect(resBody.name).to.eql(reqBody.name);\r\n    pm.expect(resBody.job).to.eql(reqBody.job);\r\n});\r\n\r\n// 3. Trích xuất id trả về và gán vào biến môi trường userId\r\npm.test(\"Trích xuất và lưu userId vào Environment\", function () {\r\n    pm.expect(resBody).to.have.property(\"id\");\r\n    pm.expect(resBody.id).to.not.be.null.and.not.be.undefined;\r\n    \r\n    // Gán vào biến môi trường\r\n    pm.environment.set(\"userId\", resBody.id);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"An Nguyen\",\r\n  \"job\": \"QA Lead\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// 1. Kiểm tra Status code trả về là 200 OK\r\npm.test(\"Kiểm tra Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n// 2. Parse dữ liệu JSON từ Response\r\nconst res = pm.response.json();\r\n\r\n// Kiểm tra trường data.id bằng 2 và data.email chứa đuôi @reqres.in\r\npm.test(\"Kiểm tra data.id bằng 2 và email chứa đuôi @reqres.in\", function () {\r\n    // Đảm bảo đối tượng data tồn tại\r\n    pm.expect(res).to.have.property(\"data\");\r\n    \r\n    // Kiểm tra data.id bằng 2\r\n    pm.expect(res.data.id).to.eql(2);\r\n    \r\n    // Kiểm tra data.email tồn tại và có đuôi '@reqres.in'\r\n    pm.expect(res.data.email).to.be.a(\"string\");\r\n    pm.expect(res.data.email).to.include(\"@reqres.in\");\r\n});\r\n\r\n// 3. (Mở rộng) Kiểm tra cấu trúc các trường bổ trợ của Single User\r\npm.test(\"Kiểm tra các trường thông tin chuẩn của user (first_name, last_name, avatar)\", function () {\r\n    pm.expect(res.data).to.have.all.keys(\"id\", \"email\", \"first_name\", \"last_name\", \"avatar\");\r\n    pm.expect(res.data.first_name).to.be.a(\"string\").and.not.empty;\r\n    pm.expect(res.data.last_name).to.be.a(\"string\").and.not.empty;\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// 1. Kiểm tra Status code trả về là 200 OK\r\npm.test(\"Kiểm tra Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n// 2. Parse dữ liệu JSON từ Response Body\r\nconst res = pm.response.json();\r\nconst req = JSON.parse(pm.request.body.raw);\r\n\r\n// 3. Kiểm tra trường updatedAt tồn tại trong response body\r\npm.test(\"Kiểm tra trường updatedAt tồn tại trong response body\", function () {\r\n    pm.expect(res).to.have.property(\"updatedAt\");\r\n    pm.expect(res.updatedAt).to.be.a(\"string\").and.not.empty;\r\n});\r\n\r\n// 4. (Mở rộng) Kiểm tra các trường name và job được cập nhật chính xác theo dữ liệu gửi đi\r\npm.test(\"Kiểm tra các thông tin cập nhật (name, job) khớp với dữ liệu gửi\", function () {\r\n    pm.expect(res.name).to.eql(req.name);\r\n    pm.expect(res.job).to.eql(req.job);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"An Nguyen Updated\",\r\n  \"job\": \"QA Manager\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// 1. Kiểm tra Status code trả về đúng chuẩn 204 No Content\r\npm.test(\"Kiểm tra Status code is 204 (No Content)\", function () {\r\n    pm.response.to.have.status(204);\r\n});\r\n\r\n// 2. (Mở rộng) Xác nhận Response Body hoàn toàn rỗng theo chuẩn HTTP 204\r\npm.test(\"Kiểm tra response body rỗng khi xóa thành công\", function () {\r\n    pm.expect(pm.response.text()).to.be.empty;\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Neg",
+      "item": [
+        {
+          "name": "Register Unsuccessful",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// 1. Kiểm tra Status code trả về là 400 Bad Request\r\npm.test(\"Kiểm tra Status code is 400 (Bad Request)\", function () {\r\n    pm.response.to.have.status(400);\r\n});\r\n\r\n// 2. Parse dữ liệu JSON từ Response\r\nconst res = pm.response.json();\r\n\r\n// 3. Kiểm tra response body trả về đúng thông báo lỗi: error === \"Missing password\"\r\npm.test(\"Kiểm tra response body trả về đúng thông báo lỗi: Missing password\", function () {\r\n    // Kiểm tra body có thuộc tính 'error'\r\n    pm.expect(res).to.have.property(\"error\");\r\n    \r\n    // Kiểm tra giá trị chính xác của trường error\r\n    pm.expect(res.error).to.eql(\"Missing password\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"sydney@fife\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login Unsuccessful",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// 1. Kiểm tra Status code trả về là 400 Bad Request\r\npm.test(\"Kiểm tra Status code is 400\", function () {\r\n    pm.response.to.have.status(400);\r\n});\r\n\r\n// 2. Parse dữ liệu JSON từ Response\r\nconst res = pm.response.json();\r\n\r\n// 3. Kiểm tra response body chứa error === \"Missing email or username\"\r\npm.test(\"Kiểm tra response body chứa error === 'Missing email or username'\", function () {\r\n    // Đảm bảo response trả về có trường 'error'\r\n    pm.expect(res).to.have.property(\"error\");\r\n    \r\n    // Kiểm tra giá trị chính xác của trường error\r\n    pm.expect(res.error).to.eql(\"Missing email or username\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User Not Found",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// 1. Kiểm tra Status code trả về là 400 Bad Request\r\npm.test(\"Kiểm tra Status code is 400\", function () {\r\n    pm.response.to.have.status(400);\r\n});\r\n\r\n// 2. Parse dữ liệu JSON từ Response\r\nconst res = pm.response.json();\r\n\r\n// 3. Kiểm tra response body chứa error === \"Missing email or username\"\r\npm.test(\"Kiểm tra response body chứa error === 'Missing email or username'\", function () {\r\n    // Đảm bảo response trả về có trường 'error'\r\n    pm.expect(res).to.have.property(\"error\");\r\n    \r\n    // Kiểm tra giá trị chính xác của trường error\r\n    pm.expect(res.error).to.eql(\"Missing email or username\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
