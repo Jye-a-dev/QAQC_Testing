@@ -1,0 +1,50 @@
+name: API Testing CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: # Cho phép kích hoạt thủ công từ giao diện Actions nếu cần
+
+jobs:
+  run-newman-test:
+    name: Run API Test Suite with Newman
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Kéo mã nguồn từ repository về runner
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 2. Cài đặt môi trường Node.js (phiên bản ổn định 18)
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      # 3. Cài đặt Newman CLI và công cụ tạo báo cáo giao diện HTML htmlextra
+      - name: Install Newman and htmlextra Reporter
+        run: |
+          npm install -g newman
+          npm install -g newman-reporter-htmlextra
+
+      # 4. Thực thi kiểm thử API (không dùng file CSV)
+      # Dùng continue-on-error: true để dù có test case fail thì workflow vẫn chạy tiếp sang bước tạo artifact
+      - name: Execute Newman Run
+        run: |
+          newman run ReqRes_Collection.json \
+            -e ReqRes_Environment.json \
+            --reporters cli,htmlextra \
+            --reporter-htmlextra-export report.html
+        continue-on-error: true
+
+      # 5. Đóng gói và upload file báo cáo report.html thành Artifact
+      - name: Upload HTML Test Report Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-test-report
+          path: report.html
+          retention-days: 14
