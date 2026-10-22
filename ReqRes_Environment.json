@@ -4,7 +4,7 @@
 	"values": [
 		{
 			"key": "baseUrl",
-			"value": "",
+			"value": "https://reqres.in",
 			"type": "default",
 			"enabled": true
 		},
